@@ -1,0 +1,112 @@
+// Prisma Schema for HireLoop Job Portal
+// Target DB: SQLite (easily portable to PostgreSQL by changing provider and URL)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication and role identification
+model User {
+  id           String            @id @default(uuid())
+  name         String
+  email        String            @unique
+  passwordHash String
+  role         String            // "CANDIDATE" or "RECRUITER"
+  createdAt    DateTime          @default(now())
+
+  // Relations
+  candidateProfile CandidateProfile?
+  companies        Company[]
+  postedJobs       Job[]
+  applications     Application[]
+  statusChanges    ApplicationStatusHistory[]
+}
+
+// Profile details specific to job seekers
+model CandidateProfile {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  phone             String?
+  location          String?
+  headline          String?
+  skills            String?  @default("") // Comma-separated list of skills
+  experienceYears   Int      @default(0)
+  defaultResumePath String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Company details owned by a recruiter
+model Company {
+  id          String   @id @default(uuid())
+  name        String
+  website     String?
+  location    String?
+  description String?
+  recruiterId String
+
+  recruiter User  @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+  jobs      Job[]
+}
+
+// Job posting created by a recruiter
+model Job {
+  id                 String    @id @default(uuid())
+  title              String
+  description        String
+  location           String
+  jobType            String    // FULL_TIME | PART_TIME | INTERNSHIP | CONTRACT
+  workMode           String    // ONSITE | REMOTE | HYBRID
+  salaryMin          Int
+  salaryMax          Int
+  skills             String    // Comma-separated list of required skills
+  experienceRequired Int       // Required experience in years
+  status             String    @default("OPEN") // OPEN | CLOSED
+  deadline           DateTime?
+  companyId          String
+  postedById         String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  company      Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  postedBy     User          @relation(fields: [postedById], references: [id], onDelete: Cascade)
+  applications Application[]
+}
+
+// Job application submitted by a candidate
+model Application {
+  id            String   @id @default(uuid())
+  jobId         String
+  candidateId   String
+  resumePath    String
+  coverLetter   String?
+  status        String   @default("APPLIED") // APPLIED | UNDER_REVIEW | SHORTLISTED | REJECTED | WITHDRAWN
+  recruiterNote String?
+  appliedAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  job           Job                      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidate     User                     @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  statusHistory ApplicationStatusHistory[]
+
+  // Constraint: A candidate can only apply once to a specific job
+  @@unique([jobId, candidateId])
+}
+
+// Audit log of status transitions for an application
+model ApplicationStatusHistory {
+  id            String   @id @default(uuid())
+  applicationId String
+  fromStatus    String
+  toStatus      String
+  changedById   String
+  changedAt     DateTime @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  changedBy   User        @relation(fields: [changedById], references: [id], onDelete: Cascade)
+}
