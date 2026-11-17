@@ -19,7 +19,7 @@ const Footer = () => {
             <Link to="/register" className="hover:text-teal-600">Candidate Registration</Link>
           </div>
           <p className="text-xs text-slate-400">
-            &copy; {new Date().getFullYear()} HireLoop. Built for academic viva demonstration.
+            &copy; {new Date().getFullYear()} HireLoop. All rights reserved.
           </p>
         </div>
       </div>

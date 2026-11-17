@@ -48,7 +48,7 @@ public class DataSeeder implements CommandLineRunner {
         User sarah = new User();
         sarah.setName("Sarah Jenkins");
         sarah.setEmail("sarah@cloudnexus.io");
-        sarah.setPassword("pass123");
+        sarah.setPassword("password123");
         sarah.setRole("RECRUITER");
         sarah.setCompanyName("CloudNexus Solutions");
         userRepository.save(sarah);
@@ -56,7 +56,7 @@ public class DataSeeder implements CommandLineRunner {
         User rajesh = new User();
         rajesh.setName("Rajesh Mehta");
         rajesh.setEmail("rajesh@finscale.tech");
-        rajesh.setPassword("pass123");
+        rajesh.setPassword("password123");
         rajesh.setRole("RECRUITER");
         rajesh.setCompanyName("FinScale Technologies");
         userRepository.save(rajesh);
@@ -64,21 +64,21 @@ public class DataSeeder implements CommandLineRunner {
         User aarav = new User();
         aarav.setName("Aarav Sharma");
         aarav.setEmail("aarav@candidate.com");
-        aarav.setPassword("pass123");
+        aarav.setPassword("password123");
         aarav.setRole("CANDIDATE");
         userRepository.save(aarav);
 
         User priya = new User();
         priya.setName("Priya Nair");
         priya.setEmail("priya@candidate.com");
-        priya.setPassword("pass123");
+        priya.setPassword("password123");
         priya.setRole("CANDIDATE");
         userRepository.save(priya);
 
         User rohan = new User();
         rohan.setName("Rohan Verma");
         rohan.setEmail("rohan@candidate.com");
-        rohan.setPassword("pass123");
+        rohan.setPassword("password123");
         rohan.setRole("CANDIDATE");
         userRepository.save(rohan);
 
